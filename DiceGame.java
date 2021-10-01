@@ -23,7 +23,7 @@ public class DiceGame {
 		Players [] arrayOfPlayers = Players.playersArray();
 		input.nextLine();
 			// Player objects
-		int playerNumber = 1;
+		int playerNumber = 0;
 		while (allPlayers >= playerNumber) {
 		System.out.print("\nPlease enter player's name: ");
 		String name = input.nextLine();

@@ -2,19 +2,13 @@ import java.util.Scanner;
 public class Players {
 	
 	private String name;
-	private int playerNumber;
+	private int totalScore; /*substitutes [] scorePerPlayer */
+	private int [] pointsPerCategory; /*substitutes [][] allPointsOfPlayers */
 	
 	private static int numberOfPlayers;
 	private static int defaultScore = -1; //will be eliminated and substitued by local variables in th efunction that computes total scores and print the score board
 	private static int [][] allPointsOfPlayers;
 	private static int [] scorePerPlayer;
-	
-	private int totalScore; /*substitutes [] scorePerPlayer */
-	private int [] pointsPerCategory; /*substitutes [][] allPointsOfPlayers */
-	
-	
-
-	
 	
 	//Players Constructors
 	Players (int allPlayers){
@@ -37,10 +31,6 @@ public class Players {
 		return numberOfPlayers;
 	}
 	
-	public int getplayerNumber() {
-		return playerNumber;
-	}
-	
 	public String getname() {
 		return name;
 	}
@@ -54,7 +44,6 @@ public class Players {
 	public static int [] getscorePerPlayer() {
 		return scorePerPlayer;
 	}
-	
 	
 	
 	// Array of players
