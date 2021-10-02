@@ -6,24 +6,21 @@ public class Players {
 	private int [] pointsPerCategory; /*substitutes [][] allPointsOfPlayers */
 	
 	private static int numberOfPlayers;
-	private static int defaultScore = -1; //will be eliminated and substitued by local variables in th efunction that computes total scores and print the score board
-	private static int [][] allPointsOfPlayers;
-	private static int [] scorePerPlayer;
+	//private static int defaultScore = -1;   will be eliminated and substituted by a literal locally in the functions that need it; i.e., in the constructor to initialize the members of the array instance variable pointsPerCategory, and in the printBoard function
+	//private static int [][] allPointsOfPlayers;    will be eliminated; substituted by [] pointsPerCategory;
+	//private static int [] scorePerPlayer;
 	
 	//Players Constructors
 	Players (int allPlayers){
 		numberOfPlayers = allPlayers;
-		scorePerPlayer  = new int [numberOfPlayers];
-		allPointsOfPlayers = new int [ScoreBoard.getnumberOfCategories()][numberOfPlayers];
-		for(int i = 0; i < ScoreBoard.getnumberOfCategories(); i++) {
-			for (int j = 0; j < numberOfPlayers; j ++) {
-			allPointsOfPlayers[i][j] = defaultScore;
-			}
-		}
 	}
 	
 	Players (String name){
 		this.name = name;
+		pointsPerCategory = new int [ScoreBoard.getnumberOfCategories()];
+		for (int i = 0; i < ScoreBoard.getnumberOfCategories(); i++) {
+			pointsPerCategory[i] = -1;
+		}
 	}
 	
 	// Getters
@@ -34,16 +31,18 @@ public class Players {
 	public String getname() {
 		return name;
 	}
-	public static int [][] getallPoints () {
-		return allPointsOfPlayers;
-	}
-	public static double getdefaultScore () {
-		return defaultScore;
+	public int [] getpointsPerCategory () {
+		return pointsPerCategory;
 	}
 	
-	public static int [] getscorePerPlayer() {
-		return scorePerPlayer;
+	public int gettotalScore() {
+		return totalScore;
 	}
+	
+	//Setters
+		public  void settotalScore(int total) {
+			totalScore = totalScore + total;
+		}
 	
 	
 	// Array of players
@@ -54,13 +53,13 @@ public class Players {
 	
 	
 	//Determining the highest score
-	static int highestScore(){
+	static int highestScore(Players [] arrayOfPlayers){
 		int highestIndex = 0;
 		int highestScore = 0;
 		for (int i = 0; i < numberOfPlayers; i++) {
-			if(scorePerPlayer[highestIndex] <= scorePerPlayer[i]){
+			if(arrayOfPlayers[highestIndex].totalScore <= arrayOfPlayers[i].totalScore){
 				highestIndex = i;
-				highestScore = scorePerPlayer[highestIndex];
+				highestScore = arrayOfPlayers[highestIndex].totalScore;
 			}
 		}							
 		return highestScore;
@@ -83,7 +82,7 @@ public class Players {
 			diceToAssign[lowestIndex] = diceToAssign[i];
 			diceToAssign[i] = lowestDice;										
 		}
-		// Generating point assignment menu
+		// Generating "point assignment menu"
 		String [] categories = ScoreBoard.getcategories();
 		System.out.print("\n Select from the menu which category you wish to assign points to (enter the corresponding digit and then press 'enter'):\n");
 		for(int i = 0; i < ScoreBoard.getnumberOfCategories(); i++) {
@@ -110,7 +109,6 @@ public class Players {
 			}
 			// Entry processing
 			int allocated = 1;
-			//categoryAssigned = input.nextInt();
 			switch(categoryAssigned) {
 			case 1:
 			case 2:
@@ -118,68 +116,68 @@ public class Players {
 			case 4:
 			case 5:
 			case 6:
-				flag = selectionValidation(categoryAssigned, currentPlayer);
+				flag = selectionValidation(categoryAssigned, currentPlayer, arrayOfPlayers);
 				if(flag == true) {
 					break;
 				}
-				pointsAllocationToCell (diceToAssign, categoryAssigned, currentPlayer);
+				pointsAllocationToCell (diceToAssign, categoryAssigned, currentPlayer, arrayOfPlayers);
 				ScoreBoard.setcellsOccuppied(allocated);
 				break;
 			case 7:
-				flag = selectionValidation(categoryAssigned, currentPlayer);
+				flag = selectionValidation(categoryAssigned, currentPlayer, arrayOfPlayers);
 				if(flag == true) {
 					break;
 				}
 				int largerSubset = Dice.getnumberOfDices()/2;
 				for (int i = 0; i < largerSubset - 1; i++) {
 					if(diceToAssign[i] != diceToAssign[i + 1]){
-						allPointsOfPlayers[categoryAssigned - 1][currentPlayer] = 0;
+						arrayOfPlayers[currentPlayer].pointsPerCategory[categoryAssigned - 1] = 0;
 						break;
 					}
 				}
-				if(allPointsOfPlayers[categoryAssigned - 1][currentPlayer] == 0) {
+				if(arrayOfPlayers[currentPlayer].pointsPerCategory[categoryAssigned - 1] == 0) {
 					ScoreBoard.setcellsOccuppied(allocated);
 					break;
 				}
 				for (int i = largerSubset + 1; i < Dice.getnumberOfDices() - 1; i++) {
 					if(diceToAssign[i] != diceToAssign[i + 1]){
-						allPointsOfPlayers[categoryAssigned - 1][currentPlayer] = 0;
+						arrayOfPlayers[currentPlayer].pointsPerCategory[categoryAssigned - 1] = 0;
 						break;
 					}
 				}
-				if(allPointsOfPlayers[categoryAssigned - 1][currentPlayer] == 0) {
+				if(arrayOfPlayers[currentPlayer].pointsPerCategory[categoryAssigned - 1] == 0) {
 					ScoreBoard.setcellsOccuppied(allocated);
 					break;
 				}
 				if((diceToAssign[largerSubset] != diceToAssign[largerSubset - 1]) && (diceToAssign[largerSubset] != diceToAssign[largerSubset + 1])) {
-					allPointsOfPlayers[categoryAssigned - 1][currentPlayer] = 0;
+					arrayOfPlayers[currentPlayer].pointsPerCategory[categoryAssigned - 1] = 0;
 					ScoreBoard.setcellsOccuppied(allocated);
 					break;
 				}
-				allPointsOfPlayers[categoryAssigned - 1][currentPlayer] = 20;
+				arrayOfPlayers[currentPlayer].pointsPerCategory[categoryAssigned - 1] = 20;
 				ScoreBoard.setcellsOccuppied(allocated);
 				break;
 			case 8:
-				flag = selectionValidation(categoryAssigned, currentPlayer);
+				flag = selectionValidation(categoryAssigned, currentPlayer, arrayOfPlayers);
 				if(flag == true) {
 					break;
 				}
 				for (int i = Dice.getnumberOfDices() - 1; i > 0; i--) {
 					if (diceToAssign[i] - diceToAssign[i - 1] != 1) {
-						allPointsOfPlayers[categoryAssigned - 1][currentPlayer] = 0;
+						arrayOfPlayers[currentPlayer].pointsPerCategory[categoryAssigned - 1] = 0;
 						break;
 					}
 				}
-				if (allPointsOfPlayers[categoryAssigned - 1][currentPlayer] == 0) {
+				if (arrayOfPlayers[currentPlayer].pointsPerCategory[categoryAssigned - 1] == 0) {
 					ScoreBoard.setcellsOccuppied(allocated);
 					break;
 				}else {
-					allPointsOfPlayers[categoryAssigned - 1][currentPlayer] = 30;
+					arrayOfPlayers[currentPlayer].pointsPerCategory[categoryAssigned - 1] = 30;
 					ScoreBoard.setcellsOccuppied(allocated);
 					break;
 				}
 			case 9:
-				flag = selectionValidation(categoryAssigned, currentPlayer);
+				flag = selectionValidation(categoryAssigned, currentPlayer, arrayOfPlayers);
 				if(flag == true) {
 					break;
 				}
@@ -191,15 +189,15 @@ public class Players {
 					} 
 				}
 				if(matches >= 4) {
-					allPointsOfPlayers[categoryAssigned - 1][currentPlayer] = 40;
+					arrayOfPlayers[currentPlayer].pointsPerCategory[categoryAssigned - 1] = 40;
 					ScoreBoard.setcellsOccuppied(allocated);
 					break;
 				}
-				allPointsOfPlayers[categoryAssigned - 1][currentPlayer] = 0;
+				arrayOfPlayers[currentPlayer].pointsPerCategory[categoryAssigned - 1] = 0;
 				ScoreBoard.setcellsOccuppied(allocated);
 				break;
 			case 10:
-				flag = selectionValidation(categoryAssigned, currentPlayer);
+				flag = selectionValidation(categoryAssigned, currentPlayer, arrayOfPlayers);
 				if(flag == true) {
 					break;
 				}
@@ -211,11 +209,11 @@ public class Players {
 					} 
 				}
 				if(matches == 5) {
-					allPointsOfPlayers[categoryAssigned - 1][currentPlayer] = 50;
+					arrayOfPlayers[currentPlayer].pointsPerCategory[categoryAssigned -1] = 50;
 					ScoreBoard.setcellsOccuppied(allocated);
 					break;
 				}
-				allPointsOfPlayers[categoryAssigned - 1][currentPlayer] = 0;
+				arrayOfPlayers[currentPlayer].pointsPerCategory[categoryAssigned - 1] = 0;
 				ScoreBoard.setcellsOccuppied(allocated);
 				break;
 			default:
@@ -231,15 +229,15 @@ public class Players {
 	}
 
 	
-	static boolean selectionValidation (int categoryAssigned, int currentPlayer) {
-		if (allPointsOfPlayers[categoryAssigned - 1][currentPlayer] != defaultScore) {
+	static boolean selectionValidation (int categoryAssigned, int currentPlayer, Players [] arrayOfPlayers) {
+		if (arrayOfPlayers[currentPlayer].pointsPerCategory[categoryAssigned - 1] != -1) {
 			System.out.print("\n That category is aready occupied. Please select another category: ");
 			return true;
 		}
 		return false;
 	}
 	
-	static void pointsAllocationToCell (int [] diceToAssign, int categoryAssigned, int currentPlayer) {
+	static void pointsAllocationToCell (int [] diceToAssign, int categoryAssigned, int currentPlayer, Players [] arrayOfPlayers) {
 		int points = 0;
 		for(int i = 0; i < Dice.getnumberOfDices(); i++) {
 			if(diceToAssign[i] != categoryAssigned) {
@@ -247,7 +245,7 @@ public class Players {
 			}
 			points = points + diceToAssign[i];		
 		}
-		allPointsOfPlayers[categoryAssigned - 1][currentPlayer] = points;
+		arrayOfPlayers[currentPlayer].pointsPerCategory[categoryAssigned - 1] = points;
 	}
 }
 

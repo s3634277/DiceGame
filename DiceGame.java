@@ -24,21 +24,20 @@ public class DiceGame {
 		input.nextLine();
 			// Player objects
 		int playerNumber = 0;
-		while (allPlayers >= playerNumber) {
+		while (allPlayers > playerNumber) {
 		System.out.print("\nPlease enter player's name: ");
 		String name = input.nextLine();
-		arrayOfPlayers[playerNumber - 1] = new Players(name);
+		arrayOfPlayers[playerNumber] = new Players(name);
 		playerNumber++;
 		}
 	//Play the game
-		int [][] allPoints = Players.getallPoints();
 		final int goesPerTurn = 3;
 		int currentPlayer = 0;
 		boolean gamePlay = true;
 		while(gamePlay){
 			int diceRollNumber = 0;
 				//Print score board and roll dices for the first time for the first player
-			ScoreBoard.printBoard(arrayOfPlayers, allPoints);
+			ScoreBoard.printBoard(arrayOfPlayers);
 			diceRollNumber = Dice.diceRoll(diceRollNumber, currentPlayer, arrayOfPlayers, input);
 			
 				// Menu options after rolling dices
@@ -52,23 +51,23 @@ public class DiceGame {
 							rollDecision = Dice.pickedToRoll(input, diceRollNumber);
 						}
 						//Roll dices and print current score board
-						ScoreBoard.printBoard(arrayOfPlayers, allPoints);
+						ScoreBoard.printBoard(arrayOfPlayers);
 						diceRollNumber = Dice.diceRoll(diceRollNumber, currentPlayer, arrayOfPlayers, input);
 						if (diceRollNumber >= goesPerTurn) {
 							System.out.print("\nYour turn is over; you have to assign points to your score now\n\n");
 							// Determining whether all the cells in the score board have been allocated points (if so determines winner and exits the program)
 							if(Players.pointsAllocation(input, currentPlayer, arrayOfPlayers)) {
 								//Sorts players' scores from highest to lowest to determine winner
-								int highestScore = highestScore();
+								int highestScore = Players.highestScore(arrayOfPlayers);
 								System.out.print("\nCONGRATS ");
 								for (int i = 0; i < Players.getnumberOfPlayers(); i++ ) {
-									if(Players.getscorePerPlayer()[i] == highestScore) {
+									if(arrayOfPlayers[i].gettotalScore() == highestScore) {
 										System.out.printf(" %s,  ", arrayOfPlayers[i].getname());
 									}
 								}
 								System.out.print(" YOU WON. THE BEERS ARE ON YOU YAY !!!!!!");
 								//Printing final score board before exiting the program
-								ScoreBoard.printBoard(arrayOfPlayers, allPoints);
+								ScoreBoard.printBoard(arrayOfPlayers);
 								System.exit(0);
 							}else if(currentPlayer >= allPlayers - 1){
 								currentPlayer = 0;
@@ -81,16 +80,16 @@ public class DiceGame {
 						break;
 					case 2:
 						if(Players.pointsAllocation(input, currentPlayer, arrayOfPlayers)) {
-							int highestScore = highestScore();
+							int highestScore = Players.highestScore(arrayOfPlayers);
 							System.out.print("\nCONGRATS ");
 							for (int i = 0; i < Players.getnumberOfPlayers(); i++ ) {
-								if(Players.getscorePerPlayer()[i] == highestScore) {
+								if(arrayOfPlayers[i].gettotalScore() == highestScore) {
 									System.out.printf(" %s,  ", arrayOfPlayers[i].getname());
 								}
 							}
 							System.out.print("YOU WON. THE BEERS ARE ON YOU YAY !!!!!!");
 							//Printing final score board before exiting the program
-							ScoreBoard.printBoard(arrayOfPlayers, allPoints);
+							ScoreBoard.printBoard(arrayOfPlayers);
 							System.exit(0);
 						}else if(currentPlayer >= allPlayers - 1){
 							currentPlayer = 0;                                                
@@ -132,19 +131,6 @@ public class DiceGame {
 			}
 		}
 		return menuSelection;
-	}
-	
-	//Determining the highest score
-	static int highestScore(){
-		int highestIndex = 0;
-		int highestScore = 0;
-		for (int i = 0; i < Players.getnumberOfPlayers(); i++) {
-			if(Players.getscorePerPlayer()[highestIndex] <= Players.getscorePerPlayer()[i]){
-				highestIndex = i;
-				highestScore = Players.getscorePerPlayer()[highestIndex];
-			}
-		}							
-		return highestScore;
 	}
 	
 	//Utility function to check whether an entry is a number

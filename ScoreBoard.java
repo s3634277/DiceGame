@@ -1,8 +1,8 @@
 
 public class ScoreBoard {
 	final private static int numberOfCategories = 10;
-	final private static String [] categories = {"One", "Two", "Three", "Four", "Five", "Six", "F HOUSE", "STRAIGHT", "POKER",
-			"COMMANDER"};
+	final private static String [] categories = {"One", "Two", "Three", "Four", "Five", "Six", "F HOUSE", "STRAIGHT",
+			"POKER", "COMMANDER"};
 	private static int cellSize = 15;
 	private static int cellsOccuppied;
 	
@@ -23,13 +23,13 @@ public class ScoreBoard {
 	}
 	
 	//Print board
-	static void printBoard(Players [] arrayOfPlayers, int [] [] playerScores){
+	static void printBoard(Players [] arrayOfPlayers) {
 		System.out.print("\n\nCurrent score board\n\n");
 		//Printing line with players' names
 		playerNamesRow(arrayOfPlayers);
 		//Printing scores
-		scoreMatrix(playerScores);
-		totalScore(playerScores);
+		scoreMatrix(arrayOfPlayers);
+		totalScore(arrayOfPlayers);
 	}
 
 	static void playerNamesRow(Players [] arrayOfPlayers) {
@@ -39,24 +39,27 @@ public class ScoreBoard {
 		System.out.print("|");
 		int width1;
 		int width2;
+		
 		for (int i = 0; i < Players.getnumberOfPlayers(); i++) {
 			if (cellSize - arrayOfPlayers[i].getname().length() % 2 == 0) {
-				width1 = (cellSize - arrayOfPlayers[i].getname().length())/2;
-				width2 = (cellSize - arrayOfPlayers[i].getname().length())/2 + arrayOfPlayers[i].getname().length() + 1;
+				width1 = (cellSize - arrayOfPlayers[i].getname().length())/2 + arrayOfPlayers[i].getname().length();
+				width2 = cellSize - width1 + 1;
+				
 			}else {
-				width1 = (cellSize - arrayOfPlayers[i].getname().length())/2;
-				width2 = (cellSize - arrayOfPlayers[i].getname().length())/2 + arrayOfPlayers[i].getname().length() + 2;
+				width1 = (cellSize - arrayOfPlayers[i].getname().length())/2 + arrayOfPlayers[i].getname().length() + 1;
+				width2 = cellSize - width1 + 1;
+				
 			}
-			System.out.printf("%" + width2 + "s", arrayOfPlayers[i].getname());
-			System.out.printf("%" + width1 + "s", "|");
+			System.out.printf("%" + width1 + "s", arrayOfPlayers[i].getname());
+			System.out.printf("%" + width2 + "s", "|");
 		}
 		System.out.print("\n");
 	}
 	
-	static void scoreMatrix(int [] [] playerScores) {
+	static void scoreMatrix(Players [] arrayOfPlayers) {
 		for (int categoryCounter = 0; categoryCounter < numberOfCategories;	categoryCounter++) {
 			lineRow();
-			scoreRow(categoryCounter, playerScores);
+			scoreRow(categoryCounter, arrayOfPlayers);
 			System.out.print("\n");
 		};
 		lineRow();
@@ -72,89 +75,91 @@ public class ScoreBoard {
 		System.out.print("\n");
 	}
 	
-	static void scoreRow(int categoryCounter, int [] [] playerScores) {
+	static void scoreRow(int categoryCounter, Players [] arrayOfPlayers) {
 		scoreHeadline(categoryCounter);
-		scores(categoryCounter, playerScores);
+		scores(categoryCounter, arrayOfPlayers);
 	}
 	
 	static void scoreHeadline(int categoryCounter) {
 		int width1;
 		int width2;
 		if (cellSize -  categories[categoryCounter].length() % 2 == 0) {
-			width1 = (cellSize - categories[categoryCounter].length())/2;
-			width2 = (cellSize - categories[categoryCounter].length())/2 + categories[categoryCounter].length() + 1;
+			width1 = (cellSize - categories[categoryCounter].length())/2 + categories[categoryCounter].length();
+			width2 = cellSize - width1 + 1;
 		}else {
-			width1 = (cellSize - categories[categoryCounter].length())/2;
-			width2 = (cellSize - categories[categoryCounter].length())/2 + categories[categoryCounter].length() + 2;
+			width1 = (cellSize - categories[categoryCounter].length())/2 + categories[categoryCounter].length() + 1;
+			width2 = cellSize - width1 + 1;
 		}
-		System.out.printf("%" + width2 + "s", categories[categoryCounter]);
-		System.out.printf("%" + width1 + "s", "|");
+		System.out.printf("%" + width1 + "s", categories[categoryCounter]);
+		System.out.printf("%" + width2 + "s", "|");
 	}
 	
-	static void scores(int categoryCounter, int [] [] playerScores) {
+	static void scores(int categoryCounter, Players [] arrayOfPlayers) {
+		
 		int scoreDigits = 2;
 		int width1;
 		int width2;
 		if (cellSize -  scoreDigits % 2 == 0) {
-			width1 = (cellSize - scoreDigits)/2;
-			width2 = (cellSize - scoreDigits)/2 + scoreDigits + 1;
+			width1 = (cellSize - scoreDigits)/2 + scoreDigits;
+			width2 = cellSize - width1;
 		}
 		else {
-			width1 = (cellSize - scoreDigits)/2;
-			width2 = (cellSize - scoreDigits)/2 + scoreDigits + 2;
+			width1 = (cellSize - scoreDigits)/2 + scoreDigits + 1;
+			width2 = cellSize - width1 + 1;
 		}
-		for (int playerCounter = 0; playerCounter < Players.getnumberOfPlayers(); playerCounter++) { 
-			if(playerScores[categoryCounter][playerCounter] == Players.getdefaultScore()) {
-				System.out.printf("%" + width2 + "s", "--");
+		for(int i = 0; i < arrayOfPlayers.length; i++) {
+			if(arrayOfPlayers[i].getpointsPerCategory()[categoryCounter] == -1) {
+				System.out.printf("%" + width1 + "s", "--");
 			}else{
-				System.out.printf("%" + width2 + "d", playerScores[categoryCounter][playerCounter]);
+				System.out.printf("%" + width1 + "d", arrayOfPlayers[i].getpointsPerCategory()[categoryCounter]);
 			}
-			System.out.printf("%" + width1 + "s", "|");
-			
-		};
+			System.out.printf("%" + width2 + "s", "|");
+		}
 	}
 	
-	static void totalScore(int [] [] playerScores){
+	static void totalScore(Players [] arrayOfPlayers){
 		//Printing the headline
 			//Padding on each side
 		int width1;
 		int width2;
 		if (cellSize -  "Total Score".length() % 2 == 0) {
-			width1 = (cellSize - "Total Score".length())/2;
-			width2 = (cellSize - "Total Score".length())/2 + "Total Score".length() + 1;
+			width1 = (cellSize - "Total Score".length())/2 + "Total Score".length();
+			width2 = cellSize - width1;
 		}else {
-			width1 = (cellSize - "Total Score".length())/2;
-			width2 = (cellSize - "Total Score".length())/2 + "Total Score".length() + 2;
+			width1 = (cellSize - "Total Score".length())/2 + "Total Score".length() + 1;
+			width2 = cellSize - width1 + 1;
 		}
 			//The printing it self
-		System.out.printf("%" + width2 + "s", "Total Score");
-		System.out.printf("%" + width1 + "s", "|");
+		System.out.printf("%" + width1+ "s", "Total Score");
+		System.out.printf("%" + width2  + "s", "|");
 		//Printing the totals per player
 			//Padding on each side
-		int scoreDigits = 2;
+		int scoreDigits = 3;
 		if (cellSize -  scoreDigits % 2 == 0) {
-			width1 = (cellSize - scoreDigits)/2;
-			width2 = (cellSize - scoreDigits)/2 + scoreDigits + 1;
+			width1 = (cellSize - scoreDigits)/2 + scoreDigits;
+			width2 = cellSize - width1;
 		}
 		else {
-			width1 = (cellSize - scoreDigits)/2;
-			width2 = (cellSize - scoreDigits)/2 + scoreDigits + 2;
+			width1 = (cellSize - scoreDigits)/2 + scoreDigits + 1;
+			width2 = cellSize - width1 + 1;
 		}
 			//Computing the totals per player and saving them in an array
 		for (int playerCounter = 0; playerCounter < Players.getnumberOfPlayers(); playerCounter++) {
 			int total = 0;
 			for(int categoryCounter = 0; categoryCounter < numberOfCategories; categoryCounter++) {
-				if(playerScores[categoryCounter][playerCounter] != Players.getdefaultScore()) {
-					total = total + playerScores[categoryCounter][playerCounter];
+				if(arrayOfPlayers[playerCounter].getpointsPerCategory()[categoryCounter] != -1) {
+					total = total + arrayOfPlayers[playerCounter].getpointsPerCategory()[categoryCounter];
 				}
 			}
 			//The printing it self
-			System.out.printf("%" + width2 + "d", total);
-			System.out.printf("%" + width1 + "s", "|");
+			System.out.printf("%" + width1+ "d", total);
+			System.out.printf("%" + width2  + "s", "|");
 			//Saving the total score per player
-			Players.getscorePerPlayer()[playerCounter] = total;
+			arrayOfPlayers[playerCounter].settotalScore(total);
 			
 		};
-		System.out.print("\n");
+		System.out.print("\n\n\n");
+		System.out.print("F HOUSE   = 3 dices the same + 2 dices the same\nSTRAIGHT  = dices 1 to 5 or 2 to 6\nPOKER     = 4 dices de same"
+				+ "\nCOMMANDER = 5 dices the same\n");
 	}
 }
